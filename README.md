@@ -4,7 +4,7 @@
 
 *This is an easy-to-use Web Service to easily host your website to a specific port.*  
 
-> Directly go to the guide section by [clicking here](#guide)!
+Directly go to the guide section by [clicking here](#guide)!
 
 </div>
 
