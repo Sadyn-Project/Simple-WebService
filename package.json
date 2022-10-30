@@ -1,7 +1,7 @@
 {
   "name": "sadyn-webservice",
-  "version": "1.1.0",
-  "description": "",
+  "version": "canary",
+  "description": "An easy-to-use WeB Service created by Sadyn Development, to simply host your website.",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
