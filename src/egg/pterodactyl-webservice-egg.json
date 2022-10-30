@@ -1,0 +1,31 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2022-10-29T18:43:59+02:00",
+    "name": "Web Service NodeJS",
+    "author": "gabriele.giambrone@icloud.com",
+    "description": "A Web Service NodeJS egg using Sadyn WebService.\r\n\r\nUse this to host your website in a simple way.\r\n\r\nPort will set automatically to the server Primary allocation inside config.json.\r\n\r\nCheck out GitHub Repo here: https:\/\/github.com\/Sadyn-Project\/Simple-WebService",
+    "features": null,
+    "docker_images": {
+        "ghcr.io\/parkervcp\/yolks:nodejs_17": "ghcr.io\/parkervcp\/yolks:nodejs_17"
+    },
+    "file_denylist": [],
+    "startup": "\/usr\/local\/bin\/npm install; \/usr\/local\/bin\/npm start",
+    "config": {
+        "files": "{\r\n    \"config.json\": {\r\n        \"parser\": \"json\",\r\n        \"find\": {\r\n            \"port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": [\r\n        \"Server listening\"\r\n    ]\r\n}",
+        "logs": "{}",
+        "stop": "exit"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n# NodeJS Express Web Service Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt install -y curl file unzip make gcc g++ python python-dev libtool\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\ncurl -L https:\/\/github.com\/Sadyn-Project\/Simple-WebService\/releases\/latest\/download\/WebService.tar.gz | tar -xzv\r\n\/usr\/local\/bin\/npm install\r\n\/usr\/local\/bin\/npm run setup\r\n\r\necho 'Install script ends here'\r\nexit 0",
+            "container": "node:14-buster-slim",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": []
+}
