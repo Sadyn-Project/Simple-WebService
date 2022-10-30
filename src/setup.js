@@ -2,11 +2,11 @@ const fs = require('fs');
 const chalk = require('chalk');
 
 if (process.argv.includes('force')) {
-	console.log(chalk.blue('Recursively generating files...'))
+	console.log(chalk.blue('Recursively generating files...'));
 	if (fs.existsSync('pages')) fs.rmSync('pages', { recursive: true });
 	if (fs.existsSync('files')) fs.rmSync('files', { recursive: true });
 	if (fs.existsSync('config.json')) fs.rmSync('config.json', { recursive: true });
-} else console.log(chalk.blue('Generating files...'))
+} else console.log(chalk.blue('Generating files...'));
 
 let suggestRecursive = 0;
 

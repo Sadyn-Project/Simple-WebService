@@ -53,7 +53,7 @@ app.get('*', (req, res) => {
 	} else if (req.path !== '/' && files.includes(req.path.substring(1))) {
 		res.sendFile(`${process.cwd()}/files${req.path}`);
 	} else if (pages.includes('404.html')) {
-		const file = fs.readFileSync(`pages/404.html`);
+		const file = fs.readFileSync('pages/404.html');
 		res.set('Content-Type', 'text/html');
 		res.status(404).send(file);
 	} else res.status(404).send('Page not found');
