@@ -5,7 +5,11 @@ const watch = require('watch');
 const chalk = require('chalk');
 const readline = require('readline');
 
+const package = require('../package.json');
+
 const app = express();
+
+if (package.version == 'canary') console.log(`You are currently running on a ${chalk.underline.yellow('canary')} version, we suggest you to use an official release.`);
 
 let needSetup = 0;
 
