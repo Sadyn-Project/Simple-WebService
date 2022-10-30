@@ -67,22 +67,22 @@ app.listen(PORT, async () => {
 
 const rl = readline.createInterface({
 	input: process.stdin,
-	output: process.stdout
+	output: process.stdout,
 });
 
 async function prompt() {
-await rl.question(`\n${chalk.cyan('WebService')} > `, async (answer) => {
-	switch (answer.split(' ')[0]) {
+	await rl.question(`\n${chalk.cyan('WebService')} > `, async (answer) => {
+		switch (answer.split(' ')[0]) {
 		case 'views': {
 			const lastWeek = views.filter(timestamp => timestamp >= Date.now() - 6048e5);
 			const lastDay = views.filter(timestamp => timestamp >= Date.now() - 864e5);
 			console.log(`${chalk.cyan('Total views:')} ${chalk.underline(views.length)}\n${chalk.cyan('Weekly views:')} ${chalk.underline(lastWeek.length)}\n${chalk.cyan('Daily views:')} ${chalk.underline(lastDay.length)}`);
 			break;
 		} default: {
-			 console.log(chalk.bold.red('Error - Command not found'));
-			 break;
+			console.log(chalk.bold.red('Error - Command not found'));
+			break;
 		}
-	}
-	await prompt();
-});
+		}
+		await prompt();
+	});
 }
