@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
 const glob = require('glob');
 const watch = require('watch');
 const chalk = require('chalk');
@@ -27,6 +28,7 @@ let pages = glob.sync('pages/**/*.html').map(page => page.split('/').slice(1).jo
 let files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/'));
 
 let count = 0;
+let history = [];
 
 watch.watchTree('./', { ignoreDotFiles: true }, async (f, current, previous) => {
 	pages = glob.sync('pages/**/*.html').map(page => page.split('/').slice(1).join('/'));
@@ -35,7 +37,8 @@ watch.watchTree('./', { ignoreDotFiles: true }, async (f, current, previous) => 
 	let action = 'changed';
 	if (previous === null) action = 'created';
 	else if (current.nlink === 0) action = 'deleted';
-	if (count) console.log(`${chalk.cyan(`[${count}]`)} Content updated: ${chalk.red(f)} ${chalk.gray(`got ${action}`)}.`);
+	const time = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`;
+	if (count) history.push(`${chalk.cyan(`[${count}]`)} [${time}] ${chalk.red(f)} ${chalk.gray(`got ${action}`)}.`);
 	count += 1;
 });
 
@@ -63,9 +66,9 @@ app.get('*', (req, res) => {
 	} else res.status(404).send('Page not found');
 });
 
-const PORT = process.env.PORT || config.port || 8080;
-app.listen(PORT, async () => {
-	await console.log(chalk.cyan(`Server listening on port ${PORT}...`));
+const port = process.env.PORT || config.port || 8080;
+const server = app.listen(port, async () => {
+	console.log(chalk.cyan(`Server listening on port ${chalk.underline(port)}...`));
 	await prompt();
 });
 
@@ -74,19 +77,13 @@ const rl = readline.createInterface({
 	output: process.stdout,
 });
 
+const commands = glob.sync('src/commands/*.js').map(cmd => require(`./commands/${path.basename(cmd)}`));
+
 async function prompt() {
-	await rl.question(`\n${chalk.cyan('WebService')} > `, async (answer) => {
-		switch (answer.split(' ')[0]) {
-		case 'views': {
-			const lastWeek = views.filter(timestamp => timestamp >= Date.now() - 6048e5);
-			const lastDay = views.filter(timestamp => timestamp >= Date.now() - 864e5);
-			console.log(`${chalk.cyan('Total views:')} ${chalk.underline(views.length)}\n${chalk.cyan('Weekly views:')} ${chalk.underline(lastWeek.length)}\n${chalk.cyan('Daily views:')} ${chalk.underline(lastDay.length)}`);
-			break;
-		} default: {
-			console.log(chalk.bold.red('Error - Command not found'));
-			break;
-		}
-		}
+	await rl.question(`\n${chalk.blue('WebService')} > `, async (input) => {
+		const args = input.split(' ');
+		if (commands.map(cmd => cmd.name).includes(args[0])) require(`./commands/${args[0]}`).run({ args: args.slice(1), commands, views, history, package, server });
+		else console.log(`${chalk.bold.red('Error')} - ${chalk.redBright('command not found')}`);
 		await prompt();
 	});
 }
