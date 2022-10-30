@@ -71,6 +71,7 @@ Jump to a specific feature from here:
 - [Uploading pages](#uploading-pages)  
 - [Uploading files](#uploading-files)  
 - [Using redirects](#using-redirects)  
+- [Using commands](#using-commands)
 
 **IF YOU HAVEN'T FOLLOWED SETUP, FIRST GO [HERE](#installing)!
 
@@ -139,6 +140,12 @@ You can add as many redirects as you want by adding a comma at the end of every 
 - Redirects go over pages. This means that if you create a page called `hello.html` and a redirect on `/hello`, the redirect will work and the page will be ignored.  
 
 - If you set a long redirect like `foo/bar/hello`, that corresponds to `/foo/bar/hello`.  
+
+## Using commands  
+
+From your console, you will be able to run commands.  
+
+For the moment, the only available command is `views`, which lets you see how many people saw your website since you started the process.  
 
 # Support
 
