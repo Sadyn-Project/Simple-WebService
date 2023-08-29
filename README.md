@@ -25,16 +25,16 @@ Directly go to the guide section by [clicking here](#guide)!
 
 > *We will probably create an installing script in the future.*  
 
-- **Step 1** Download the WebService simply from our [latest release on GitHub](https://github.com/Sadyn-Project/Simple-WebService/releases/latest/) or using this command line:  
+- **Step 1** Download the WebService simply from our [latest release on ThunderNetwork](https://https://source.thundernetwork.org/Sadyn-Project/Simple-WebService/releases/latest/) or using this command line:  
 
 ```bash
 
 # Execute this inside a folder!
-curl -L https://github.com/Sadyn-Project/Simple-WebService/releases/latest/download/WebService.tar.gz | tar -xzv
+curl -L https://https://source.thundernetwork.org/Sadyn-Project/Simple-WebService/releases/latest/download/WebService.tar.gz | tar -xzv
 
 ```
 
-> This may require some dependecies to work, we suggest downloading it from [GitHub](https://github.com/Sadyn-Project/Simple-WebService/releases/latest/).  
+> This may require some dependecies to work, we suggest downloading it from [ThunderNetwork](https://https://source.thundernetwork.org/Sadyn-Project/Simple-WebService/releases/latest/).  
 
 ---
 
