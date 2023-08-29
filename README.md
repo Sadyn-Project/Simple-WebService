@@ -149,4 +149,4 @@ For the moment, the only available command is `views`, which lets you see how ma
 
 # Support
 
-If you're having any issues, ask us on our [Discord Community](https://discord.gg/PBrPeuACnU/) or create an issue on [GitHub](https://github.com/Sadyn-Project/Simple-WebService/issues/)!
+If you're having any issues, ask us on our [Discord Community](https://discord.gg/PBrPeuACnU/) or create an issue on [ThunderNetwork](https://source.thundernetwork.org/Sadyn-Project/Simple-WebService/issues/)!
