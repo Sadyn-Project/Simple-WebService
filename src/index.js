@@ -69,6 +69,7 @@ app.get('*', (req, res) => {
 const port = process.env.PORT || config.port || 8080;
 const server = app.listen(port, async () => {
 	console.log(chalk.cyan(`Server listening on port ${chalk.underline(port)}...`));
+	opener(`http://localhost:${port}`);
 	await prompt();
 });
 
