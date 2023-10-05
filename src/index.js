@@ -4,6 +4,7 @@ const path = require('path');
 const glob = require('glob');
 const watch = require('watch');
 const chalk = require('chalk');
+const opener = require('opener');
 const readline = require('readline');
 
 const package = require('../package.json');
