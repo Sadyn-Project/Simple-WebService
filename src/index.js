@@ -33,6 +33,10 @@ let history = [];
 
 watch.watchTree('./', { ignoreDotFiles: true }, async (f, current, previous) => {
 	pages = glob.sync('pages/**/*.html').map(page => page.split('/').slice(1).join('/'));
+let maintenance = {
+	active: false,
+	page: fs.existsSync('pages/_maintenance.html') ? fs.readFileSync('pages/_maintenance.html') : '<h1>Maintenance</h1>',
+}
 
 const log = (...args) => {
 	const date = new Date();
@@ -40,6 +44,7 @@ const log = (...args) => {
 	history.push(`${chalk.cyan(`[${count}]`)} [${time}] ${args.join(' ')}`);
 };
 	files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/'));
+	maintenance.page = fs.existsSync('pages/_maintenance.html') ? fs.readFileSync('pages/_maintenance.html') : '<h1>Maintenance</h1>';
 	config = JSON.parse(fs.readFileSync('config.json'));
 	let action = 'changed';
 	if (previous === null) action = 'created';
@@ -51,7 +56,10 @@ const log = (...args) => {
 let views = [];
 
 app.get('*', (req, res) => {
-	if (config.redirects[req.path.substring(1)]) {
+	if (maintenance.active) {
+		res.set('Content-Type', 'text/html');
+		res.status(200).send(maintenance.page);
+	} else if (config.redirects[req.path.substring(1)]) {
 		res.redirect(config.redirects[req.path.substring(1)]);
 	} else if (req.path.endsWith('/') && pages.includes('index.html')) {
 		const file = fs.readFileSync(`pages${req.path}index.html`);
@@ -89,7 +97,7 @@ const commands = glob.sync('src/commands/*.js').map(cmd => require(`./commands/$
 async function prompt() {
 	await rl.question(`\n${chalk.blue('WebService')} > `, async (input) => {
 		const args = input.split(' ');
-		if (commands.map(cmd => cmd.name).includes(args[0])) require(`./commands/${args[0]}`).run({ args: args.slice(1), commands, views, history, package, server });
+		if (commands.map(cmd => cmd.name).includes(args[0])) require(`./commands/${args[0]}`).run({ args: args.slice(1), log, commands, views, history, package, server, maintenance });
 		else console.log(`${chalk.bold.red('Error')} - ${chalk.redBright('command not found')}`);
 		await prompt();
 	});
