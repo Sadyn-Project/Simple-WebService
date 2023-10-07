@@ -33,13 +33,18 @@ let history = [];
 
 watch.watchTree('./', { ignoreDotFiles: true }, async (f, current, previous) => {
 	pages = glob.sync('pages/**/*.html').map(page => page.split('/').slice(1).join('/'));
+
+const log = (...args) => {
+	const date = new Date();
+	const time = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+	history.push(`${chalk.cyan(`[${count}]`)} [${time}] ${args.join(' ')}`);
+};
 	files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/'));
 	config = JSON.parse(fs.readFileSync('config.json'));
 	let action = 'changed';
 	if (previous === null) action = 'created';
 	else if (current.nlink === 0) action = 'deleted';
-	const time = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`;
-	if (count) history.push(`${chalk.cyan(`[${count}]`)} [${time}] ${chalk.red(f)} ${chalk.gray(`got ${action}`)}.`);
+	if (count) log(chalk.red(file), chalk.gray(`got ${action}.`));
 	count += 1;
 });
 

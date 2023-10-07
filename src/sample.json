@@ -1,7 +1,7 @@
 {
-    "version": "{version}",
-    "port": 3000,
-    "redirects": {
-        "example": "https://example.com"
-    }
+  "version": "sample",
+  "port": 3000,
+  "redirects": {
+    "example": "https://example.com"
+  }
 }
