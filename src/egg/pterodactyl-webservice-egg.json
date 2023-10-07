@@ -1,16 +1,16 @@
 {
-    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY Jexactyl PANEL - jexactyl.com",
     "meta": {
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2022-10-29T18:43:59+02:00",
+    "exported_at": "2023-10-05T21:30:22+02:00",
     "name": "Web Service NodeJS",
     "author": "gabriele.giambrone@icloud.com",
     "description": "A Web Service NodeJS egg using Sadyn WebService.\r\n\r\nUse this to host your website in a simple way.\r\n\r\nPort will set automatically to the server Primary allocation inside config.json.\r\n\r\nCheck out GitHub Repo here: https:\/\/github.com\/Sadyn-Project\/Simple-WebService",
     "features": null,
     "docker_images": {
-        "ghcr.io\/parkervcp\/yolks:nodejs_17": "ghcr.io\/parkervcp\/yolks:nodejs_17"
+        "ghcr.io\/parkervcp\/yolks:nodejs_20": "ghcr.io\/parkervcp\/yolks:nodejs_20"
     },
     "file_denylist": [],
     "startup": "\/usr\/local\/bin\/npm install; \/usr\/local\/bin\/npm start",
@@ -22,7 +22,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# NodeJS Express Web Service Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt install -y curl file unzip make gcc g++ python python-dev libtool\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\ncurl -L https:\/\/github.com\/Sadyn-Project\/Simple-WebService\/releases\/latest\/download\/WebService.tar.gz | tar -xzv\r\n\/usr\/local\/bin\/npm install\r\n\/usr\/local\/bin\/npm run setup\r\n\r\necho 'Install script ends here'\r\nexit 0",
+            "script": "#!\/bin\/bash\r\n#\r\n# Install Script for Sadyn Simple-WebService in Pterodactyl Panel\r\n# Using Node.JS, Express.js, and other libraries\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\necho \"Creating Directories\"\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\nif [ -d /mnt/server/src ] then\r\n    echo \"Deleting old src/ directory\"\r\n    rm -r /mnt/server/src\r\nfi\r\n\r\necho \"Installing Packages\"\r\n\r\napt update\r\napt install -y jq unzip curl file\r\n\r\necho \"Retreiving Latest Release\"\r\n\r\nresponse=$(curl -s -H \"Content-Type: application\/json\" -X GET \"https:\/\/source.thundernetwork.org\/api\/v1\/repos\/Sadyn-Project\/Simple-WebService\/releases\/latest\")\r\n\r\nlength=$(echo \"$response\" | jq -r \".assets | length\")\r\nfor ((x = 0; x < length; x++)) do\r\n    if [ $(echo \"$response\" | jq -r \".assets[$x].name\") == \"WebService.tar.gz\" ]; then\r\n        url=$(echo \"$response\" | jq -r \".assets[$x].browser_download_url\")\r\n    fi\r\ndone\r\n\r\nif [ ! -v url ]; then\r\n    echo \"Could not find latest release\"\r\n    exit 1\r\nfi\r\n\r\necho \"Downloading Latest Release\"\r\n\r\ncurl -L $url | tar -xzv\r\n\r\necho \"Installing NPM Dependencies\"\r\n\r\n\/usr\/local\/bin\/npm install\r\n\/usr\/local\/bin\/npm run setup\r\n\r\necho \"Installation Finished\"\r\n\r\nexit 0",
             "container": "node:14-buster-slim",
             "entrypoint": "bash"
         }
