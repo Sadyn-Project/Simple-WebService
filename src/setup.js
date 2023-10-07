@@ -1,5 +1,6 @@
 const fs = require('fs');
 const chalk = require('chalk');
+const package = require('../package.json');
 
 if (process.argv.includes('force')) {
 	console.log(chalk.blue('Recursively generating files...'));
@@ -22,9 +23,21 @@ else {
 	suggestRecursive = 1;
 }
 
-if (!fs.existsSync('config.json')) fs.copyFileSync('src/sample.json', 'config.json');
-else {
-	console.log(chalk.redBright(`${chalk.underline('pages')} file already exists.`));
+const config = fs.existsSync('config.json') ? require('../config.json') : null;
+console.log(config)
+
+if (!config || config.version !== package.version) {
+	console.log(chalk.blue('Generating config.json...'));
+	const newConfig = require('./sample.json');
+	newConfig.version = package.version;
+	if (config !== null) {
+		for (const y in Object.keys(newConfig)) {
+			if (!['version'].includes(y) && Object.keys(config).includes(y)) newConfig[y] = config[y];
+		}
+	}
+	fs.writeFileSync('config.json', JSON.stringify(newConfig, null, 2));
+} else {
+	console.log(chalk.redBright(`${chalk.underline('config.json')} file already exists.`));
 	suggestRecursive = 1;
 }
 

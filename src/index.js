@@ -15,9 +15,7 @@ if (package.version == 'canary') console.log(`You are currently running on a ${c
 
 let needSetup = 0;
 
-if (!fs.existsSync('pages')) needSetup = 1;
-if (!fs.existsSync('files')) needSetup = 1;
-if (!fs.existsSync('config.json')) needSetup = 1;
+if (!fs.existsSync('pages') || !fs.existsSync('files') || !fs.existsSync('config.json')) needSetup = 1;
 
 if (needSetup) {
 	console.log(chalk.bold.red(`Required files were not found. Execute ${chalk.underline('npm run setup')} to generate them.`));
@@ -25,14 +23,12 @@ if (needSetup) {
 }
 
 let config = require('../config.json');
-let pages = glob.sync('pages/**/*.html').map(page => page.split('/').slice(1).join('/'));
 let files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/'));
+let pages = glob.sync('pages/**/*.html').map(page => page.split('/').filter(x => !x.startsWith('_')).slice(1).join('/'));
 
 let count = 0;
 let history = [];
 
-watch.watchTree('./', { ignoreDotFiles: true }, async (f, current, previous) => {
-	pages = glob.sync('pages/**/*.html').map(page => page.split('/').slice(1).join('/'));
 let maintenance = {
 	active: false,
 	page: fs.existsSync('pages/_maintenance.html') ? fs.readFileSync('pages/_maintenance.html') : '<h1>Maintenance</h1>',
@@ -43,6 +39,9 @@ const log = (...args) => {
 	const time = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 	history.push(`${chalk.cyan(`[${count}]`)} [${time}] ${args.join(' ')}`);
 };
+
+watch.watchTree('./pages', { ignoreDotFiles: true }, async (file, current, previous) => {
+	pages = glob.sync('pages/**/*.html').map(page => page.split('/').filter(page => !page.startsWith('pages/api/')).slice(1).join('/'));
 	files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/'));
 	maintenance.page = fs.existsSync('pages/_maintenance.html') ? fs.readFileSync('pages/_maintenance.html') : '<h1>Maintenance</h1>';
 	config = JSON.parse(fs.readFileSync('config.json'));
@@ -82,7 +81,9 @@ app.get('*', (req, res) => {
 
 const port = process.env.PORT || config.port || 8080;
 const server = app.listen(port, async () => {
-	console.log(chalk.cyan(`Server listening on port ${chalk.underline(port)}...`));
+	console.clear();
+	console.log(chalk.gray('\n__        __   _    ____                  _          \n\\ \\      / /__| |__/ ___|  ___ _ ____   _(_) ___ ___ \n \\ \\ /\\ / / _ \\ \'_ \\___ \\ / _ \\ \'__\\ \\ / / |/ __/ _ \\\n  \\ V  V /  __/ |_) |__) |  __/ |   \\ V /| | (_|  __/\n   \\_/\\_/ \\___|_.__/____/ \\___|_|    \\_/ |_|\\___\\___|\n\n'));
+	console.log(chalk.greenBright(`Server listening on port ${chalk.underline(port)}...`));
 	opener(`http://localhost:${port}`);
 	await prompt();
 });
@@ -95,7 +96,7 @@ const rl = readline.createInterface({
 const commands = glob.sync('src/commands/*.js').map(cmd => require(`./commands/${path.basename(cmd)}`));
 
 async function prompt() {
-	await rl.question(`\n${chalk.blue('WebService')} > `, async (input) => {
+	rl.question(`\n${chalk.blue('WebService')} > `, async (input) => {
 		const args = input.split(' ');
 		if (commands.map(cmd => cmd.name).includes(args[0])) require(`./commands/${args[0]}`).run({ args: args.slice(1), log, commands, views, history, package, server, maintenance });
 		else console.log(`${chalk.bold.red('Error')} - ${chalk.redBright('command not found')}`);
