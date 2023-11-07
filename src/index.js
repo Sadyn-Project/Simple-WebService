@@ -23,8 +23,9 @@ if (needSetup) {
 }
 
 let config = require('../config.json');
-let files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/'));
 let pages = glob.sync('pages/**/*.html').map(page => page.split('/').filter(x => !x.startsWith('_')).slice(1).join('/'));
+let apis = glob.sync('pages/api/**/*.js').map(page => page.split('/').filter(x => !x.startsWith('_')).slice(2).join('/'));
+let files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/')).filter(file => file !== '');
 
 let count = 0;
 let history = [];
@@ -42,6 +43,7 @@ const log = (...args) => {
 
 watch.watchTree('./pages', { ignoreDotFiles: true }, async (file, current, previous) => {
 	pages = glob.sync('pages/**/*.html').map(page => page.split('/').filter(page => !page.startsWith('pages/api/')).slice(1).join('/'));
+	apis = glob.sync('pages/**/*.js').map(page => page.split('/').filter(page => page.startsWith('pages/api/')).slice(2).join('/'));
 	files = glob.sync('files/**').map(page => page.split('/').slice(1).join('/'));
 	maintenance.page = fs.existsSync('pages/_maintenance.html') ? fs.readFileSync('pages/_maintenance.html') : '<h1>Maintenance</h1>';
 	config = JSON.parse(fs.readFileSync('config.json'));
@@ -54,12 +56,31 @@ watch.watchTree('./pages', { ignoreDotFiles: true }, async (file, current, previ
 
 let views = [];
 
+if (config.api) {
+	app.all('/api*', async (req, res) => {
+		console.log(`${req.path.substring(4)}.js`);
+		let filename;
+		if (req.path.endsWith('/') && apis.includes('index.js')) filename = 'index.js';
+		else if (apis.includes(`${req.path.substring(4)}.js`)) filename = `${req.path.substring(5)}.js`;
+		else if (pages.includes('404.html')) {
+			const file = fs.readFileSync('pages/404.html');
+			res.set('Content-Type', 'text/html');
+			return res.status(404).send(file);
+		} else return res.status(404).send('Page not found');
+		const x = require(`../pages/api/${filename}`);
+		await x(req, res);
+	});
+}
+
 app.get('*', (req, res) => {
 	if (maintenance.active) {
 		res.set('Content-Type', 'text/html');
 		res.status(200).send(maintenance.page);
 	} else if (config.redirects[req.path.substring(1)]) {
 		res.redirect(config.redirects[req.path.substring(1)]);
+	} else if (files.includes(req.path.substring(1))) {
+		return console.log('test')
+		res.sendFile(`./files${req.path}`);
 	} else if (req.path.endsWith('/') && pages.includes('index.html')) {
 		const file = fs.readFileSync(`pages${req.path}index.html`);
 		res.set('Content-Type', 'text/html');
