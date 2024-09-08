@@ -1,3 +1,9 @@
+# Archived
+
+**This repo is being archived. A new fork will soon be available with more features and less bugs.**
+
+---
+
 <div align="center">
 
 # Sadyn Simple WebService  
